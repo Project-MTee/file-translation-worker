@@ -1,0 +1,7 @@
+[style]
+based_on_style = facebook
+spaces_before_comment = 1
+indent_width: 4
+column_limit = 120
+split_all_comma_separated_values=True
+DEDENT_CLOSING_BRACKETS=True

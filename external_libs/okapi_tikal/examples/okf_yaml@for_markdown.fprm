@@ -1,0 +1,11 @@
+#v1
+extractIsolatedStrings.b=false
+extractAllPairs.b=true
+exceptions=
+useKeyAsName.b=true
+useFullKeyPath.b=true
+useCodeFinder.b=false
+escapeNonAscii.b=false
+wrap.b=true
+subfilter=okf_markdown
+subFilterProcessLiteralAsBlock.b=true

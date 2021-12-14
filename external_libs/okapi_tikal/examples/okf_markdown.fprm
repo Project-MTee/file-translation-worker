@@ -1,0 +1,27 @@
+# markdown filter configuration file template
+# This shows the default configuration.
+# Uncomment and set appropriate values if you'd like to change the behavior from the default.
+# When using from tikal or Rainbow applications, rename the file to be okf_markdown@<your-choice>.fprm,
+# place it in the working directory.
+
+# HTML Subfilter Configuration
+# To control the extraction behavior in HTML elements, edit the HTML filter configuration file
+# and save it as okf_html@someName.fprm in a configuration directory.
+# Then specify the name without .fprm.
+# (To use the default HTML subfilter setting for Markdown, keep it commented.)
+#htmlSubfilter=okf_html@someName
+
+# Should the URLs be extracted ?
+#translateUrls=false
+
+# Should the code blocks be extracted ?
+#translateCodeBlocks=true
+
+# Should the Yaml Header Metadata be extracted ?
+#translateHeaderMetadata=false
+
+# Should the image alt text in be extracted ?
+#translateImageAltText=true
+
+
+#NOTE: The code finder is NOT supported by Markdown filter.

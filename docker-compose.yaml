@@ -1,0 +1,16 @@
+services:
+  file_translation_worker:
+    build: .
+    env_file:
+      - .env
+    # image: ghcr.io/project-mtee/file-translation-worker:1.1.0
+    environment:
+      # - RUN_MODE=simple
+      # - TASK_ID=08d988c9-da70-45cb-8bc9-0d1c154e96c0
+      FILE_TRANSLATION_SERVICE_URL: $FILE_TRANSLATION_SERVICE_URL
+      FILE_TRANSLATION_SERVICE_USER: $FILE_TRANSLATION_SERVICE_USER
+      FILE_TRANSLATION_SERVICE_PASS: $FILE_TRANSLATION_SERVICE_PASS
+      RABBITMQ_USER: $RABBITMQ_USER
+      RABBITMQ_PASS: $RABBITMQ_PASS
+      RABBITMQ_HOST: $RABBITMQ_HOST
+      TRANSLATION_API_SERVICE_URL: $TRANSLATION_API_SERVICE_URL
