@@ -15,8 +15,6 @@ from tildemt.services.file_translation_service import FileTranslationService
 
 
 class Translator():
-    keep_temp_files = False
-
     def __init__(self, doc_id):
         self.__logger = logging.getLogger('FileTranslator')
 
@@ -87,12 +85,6 @@ class Translator():
 
             self.__file_translation_service.upload_file(local_target_file, FileUploadType.TRANSLATED.value)
 
-            # Clean up the temporary files
-            if not self.keep_temp_files:
-                self.__cleanup()
-            else:
-                self.__logger.info("Running in DEBUG mode. Temporary files will NOT be removed")
-
             # Change the document status to "completed" and update statistics
             end_time = datetime.datetime.utcnow()
 
@@ -109,6 +101,8 @@ class Translator():
         except Exception:
             self.__logger.exception("File translation terminated with uncaught Exception")
             self.__report_error('E_UNKNOWN_ERROR')
+        finally:
+            self.__cleanup()
 
         self.__logger.info("File translation finished in %s", end_time - start_time)
 
@@ -135,7 +129,7 @@ class Translator():
             except OSError:
                 self.__logger.exception("Unable to remove file %s", filepath)
 
-        temp_file_dir = (f'{self.temp_dir}/{self.doc_id}')
+        temp_file_dir = f'{self.temp_dir}/{self.doc_id}'
 
         try:
             self.__logger.info("Removing directory %s", temp_file_dir)
