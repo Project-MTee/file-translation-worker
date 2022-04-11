@@ -42,7 +42,7 @@ class FileTranslationService():
 
         self.__current_metadata = response.json()
 
-        self.__logger.info("Metadata updated: %s", self.__current_metadata)
+        # self.__logger.info("Metadata updated: %s", self.__current_metadata)
 
     def get_metadata(self):
         self.__logger.info("Fetch metadata[%s]", self.__task)
