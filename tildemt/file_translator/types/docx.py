@@ -7,6 +7,7 @@ from tildemt.enums.file_translation_status_subtype import FileTranslationSubstat
 from tildemt.exceptions.file_translation_exception import FileTranslationException
 from tildemt.file_translator.types.tikal import TikalTranslator
 
+MAX_FILE_SIZE = 100 * 1024 * 1024
 
 class DOCXTranslator(TikalTranslator):
     """Handles the DOCX file translation"""
@@ -29,6 +30,13 @@ class DOCXTranslator(TikalTranslator):
         try:
             with zipfile.ZipFile(source_file, 'r') as source:
                 with zipfile.ZipFile(tmp_file, 'w') as target:
+                    archive_size = sum(e.file_size for e in source.infolist())
+                    self.__logger.info('Archive size: %s MB, limit: %s MB', archive_size / 1024 / 2024, MAX_FILE_SIZE / 1024 / 1024)
+
+                    if(archive_size > MAX_FILE_SIZE):
+                        self.__logger.error('Archive size limit reached: %s', archive_size)
+                        raise FileTranslationException(FileTranslationSubstatus.BAD_FILE, f"Archive size limit reached")
+
                     for item in source.infolist():
                         buffer = source.read(item.filename)
                         buffer = self.__filter_xml_file(item.filename, buffer)
