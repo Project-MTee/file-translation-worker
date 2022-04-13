@@ -45,8 +45,11 @@ class Translator():
             # Get the neccessary file metadata
             self.file_meta = self.__file_translation_service.get_metadata()
 
-            # This is backwards compatable, refactor this without changing original metadata
-            extension = self.file_meta["extension"] = os.path.splitext(self.file_meta['fileName'])[1][1:].lower()
+            source_file = list(filter(lambda file: file["category"] == "Source", self.file_meta['files']))[0]
+
+            extension = source_file["extension"]
+
+            extension = self.file_meta["extension"] = extension[1:].lower()
 
             source_dir = f'{self.temp_dir}/{self.doc_id}/source'
             result_dir = f'{self.temp_dir}/{self.doc_id}/result'
