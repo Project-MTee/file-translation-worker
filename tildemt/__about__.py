@@ -3,4 +3,4 @@
 # Something similar as here:
 # https://github.com/pypa/packaging/blob/main/packaging/__about__.py
 
-__version__ = "1.3.2"
+__version__ = "1.3.6"

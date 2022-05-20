@@ -54,4 +54,4 @@ if __name__ == "__main__":
             "live": liveness,
             "ready": readiness,
         })
-        serve(app, port=80)
+        serve(app, port=5000)
