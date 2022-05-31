@@ -103,7 +103,7 @@ class Translator():
             self.__report_error(err.error_type)
         except Exception:
             self.__logger.exception("File translation terminated with uncaught Exception")
-            self.__report_error('E_UNKNOWN_ERROR')
+            self.__report_error(FileTranslationSubstatus.UNSPECIFIED)
         finally:
             self.__cleanup()
 
