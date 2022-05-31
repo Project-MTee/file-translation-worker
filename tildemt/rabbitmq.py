@@ -37,10 +37,9 @@ class RabbitMQ():
                 login=self.__username,
                 password=self.__password,
                 loop=loop,
-                # https://github.com/mosquito/aio-pika/issues/301
-                client_properties={"client_properties": {
-                    "connection_name": f"{SERVICE_NAME} (health probe)"
-                }}
+                client_properties={
+                    "connection_name": SERVICE_NAME
+                }
             )
 
             logging.disable(logging.DEBUG)
