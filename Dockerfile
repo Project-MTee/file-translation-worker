@@ -20,17 +20,8 @@ RUN apt install -y perl
 RUN apt install -y file
 
 # Python dependencies
-RUN pip3 install \
-    # general
-    requests \
-    # .docx translation
-    lxml \
-    # rabbitmq client
-    aio-pika \
-    # For health check
-    waitress \
-    flask \
-    flask-healthz
+COPY requirements.txt requirements.txt
+RUN pip3 install -r requirements.txt
 
 # add non root user
 RUN groupadd -r service_user && useradd -m --no-log-init -r -g service_user service_user
