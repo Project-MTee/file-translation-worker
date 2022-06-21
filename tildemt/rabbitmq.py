@@ -6,6 +6,7 @@ import aio_pika
 
 from aio_pika import ExchangeType
 from tildemt.translator import Translator
+from aiomisc import threaded_separate
 
 # Exchange, type: Direct
 RABBITMQ_EXCHANGE = "file-translation"
@@ -26,6 +27,8 @@ class RabbitMQ():
         self.__host = os.environ.get("RABBITMQ_HOST")
         self.__port = int(os.environ.get("RABBITMQ_PORT", "5672"))
 
+        self.__event_loop = None
+
     async def _healthy(self, loop):
         try:
             connection = await aio_pika.connect(
@@ -34,10 +37,9 @@ class RabbitMQ():
                 login=self.__username,
                 password=self.__password,
                 loop=loop,
-                # https://github.com/mosquito/aio-pika/issues/301
-                client_properties={"client_properties": {
-                    "connection_name": f"{SERVICE_NAME} (health probe)"
-                }}
+                client_properties={
+                    "connection_name": SERVICE_NAME
+                }
             )
 
             logging.disable(logging.DEBUG)
@@ -58,13 +60,19 @@ class RabbitMQ():
         return healthy
 
     def listen(self):
-        loop = asyncio.new_event_loop()
+        
         while True:
             try:
+                loop = asyncio.new_event_loop()
+
+                self.__event_loop = loop
+
                 loop.run_until_complete(self.__main_loop(loop))
             except Exception:
                 self.__logger.exception("Unexpected exception, trying to restart consumer")
-
+            finally:
+                loop.close()
+    @threaded_separate
     def __process_message(self, message):
         try:
             message_body = json.loads(message)
@@ -77,6 +85,10 @@ class RabbitMQ():
         except Exception:
             self.__logger.error("Failed to process task")
 
+    def on_rabbitmq_close(self, address, error):
+        self.__logger.warning('On close || %s |||  %s', address, error)
+        self.__event_loop.call_soon_threadsafe(self.__event_loop.stop)
+
     async def __main_loop(self, loop):
 
         connection = await aio_pika.connect_robust(
@@ -85,11 +97,12 @@ class RabbitMQ():
             login=self.__username,
             password=self.__password,
             loop=loop,
-            # https://github.com/mosquito/aio-pika/issues/301
-            client_properties={"client_properties": {
+            client_properties={
                 "connection_name": SERVICE_NAME
-            }}
+            }
         )
+
+        connection.close_callbacks.add(self.on_rabbitmq_close)
 
         async with connection:
             channel = await connection.channel()
@@ -105,4 +118,6 @@ class RabbitMQ():
             async with queue.iterator() as queue_iter:
                 async for message in queue_iter:
                     async with message.process():
-                        self.__process_message(message.body)
+                        await asyncio.gather(
+                            self.__process_message(message.body)
+                        )

@@ -1,0 +1,11 @@
+# general
+requests==2.27.1
+# .docx translation
+lxml==4.8.0
+# rabbitmq client
+aio-pika==8.0.3
+# For health check
+waitress==2.1.1
+Flask==2.1.2
+flask-healthz==0.0.3
+aiomisc==16.0.13
